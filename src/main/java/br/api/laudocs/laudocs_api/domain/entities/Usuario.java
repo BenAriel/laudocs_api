@@ -1,6 +1,6 @@
 package br.api.laudocs.laudocs_api.domain.entities;
 
-import javax.validation.constraints.NotNull;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,13 +19,13 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+
     private String nome;
 
-    @NotNull
+
     private String senha;
 
-    @NotNull
+
     private String email;
 
     
