@@ -7,11 +7,12 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
-     @Bean
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/todos/**").permitAll() // Libera o acesso ao endpoint
+                .requestMatchers("/api/v1/usuario/**").permitAll() // Libera o acesso ao endpoint correto
                 .anyRequest().authenticated() // Requer autenticação para outros endpoints
             )
             .csrf(csrf -> csrf.disable()) // Desabilita proteção CSRF (usando Lambda DSL)
@@ -19,5 +20,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-    }
-
+}
