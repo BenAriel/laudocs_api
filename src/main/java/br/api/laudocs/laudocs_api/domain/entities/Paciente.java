@@ -2,6 +2,7 @@ package br.api.laudocs.laudocs_api.domain.entities;
 
 import java.time.LocalDate;
 
+import br.api.laudocs.laudocs_api.api.dto.PacienteDTO;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,4 +33,11 @@ public class Paciente {
     private LocalDate dataNasc;
 
     private int idade;
+
+    public Paciente(PacienteDTO pacienteDTO) {
+        this.nome = pacienteDTO.getNome();
+        this.CPF = pacienteDTO.getCpf();
+        this.idade = pacienteDTO.getIdade();
+        this.dataNasc = pacienteDTO.getDataNasc();
+    }
 }
