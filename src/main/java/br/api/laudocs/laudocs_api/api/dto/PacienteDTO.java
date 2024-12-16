@@ -3,60 +3,31 @@ package br.api.laudocs.laudocs_api.api.dto;
 import java.time.LocalDate;
 
 import br.api.laudocs.laudocs_api.domain.entities.Paciente;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PacienteDTO {
-
-    private int id;
-    private String nome;
+    private Long id;
     private String cpf;
-    private int idade;
+    private String nome;
     private LocalDate dataNasc;
+    private int idade;
 
-    public PacienteDTO() {
+    public PacienteDTO(Paciente paciente) {
+        this.id = paciente.getId();
+        this.cpf = paciente.getCpf();
+        this.nome = paciente.getNome();
+        this.dataNasc = paciente.getDataNasc();
+        this.idade = paciente.getIdade();
     }
 
     public static PacienteDTO toDTO(Paciente paciente) {
-        PacienteDTO dto = new PacienteDTO();
-        dto.setNome(paciente.getNome());
-        dto.setCpf(paciente.getCPF());
-        dto.setIdade(paciente.getIdade());
-        dto.setDataNasc(paciente.getDataNasc());
-        return dto;
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public int getIdade() {
-        return idade;
-    }
-
-    public void setIdade(int idade) {
-        this.idade = idade;
-    }
-
-    public LocalDate getDataNasc() {
-        return dataNasc;
-    }
-
-    public void setDataNasc(LocalDate dataNasc) {
-        this.dataNasc = dataNasc;
+        return new PacienteDTO(paciente.getId(), paciente.getCpf(), paciente.getNome(), paciente.getDataNasc(), paciente.getIdade());
     }
 }
