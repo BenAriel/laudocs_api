@@ -1,5 +1,6 @@
 package br.api.laudocs.laudocs_api.service;
 
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ public class PacienteService {
         if (!op.isPresent())
             throw new ValidationException("Paciente não encontrado.");
 
-        return PacienteDTO.toDTO(op.get());
+        return new PacienteDTO(op.get());
     }
 
     public PacienteDTO createPaciente(PacienteDTO pacienteDTO) {
@@ -43,15 +44,14 @@ public class PacienteService {
             throw new ValidationException("Informe idade ou data de nascimento.");
 
         Paciente paciente = repo.save(new Paciente(pacienteDTO));
-        return PacienteDTO.toDTO(paciente);
+        return new PacienteDTO(paciente);
     }
 
     public PacienteDTO updatePaciente(PacienteDTO pacienteDTO) {
-        Paciente paciente = repo.findById(pacienteDTO.getId());
-    
-        if (paciente == null) {
+        var op = repo.findById(pacienteDTO.getId());
+
+        if (!op.isPresent())
             throw new ValidationException("Paciente não existe.");
-        }
 
         ValidationUtils.checkVazio(pacienteDTO.getNome(), "Nome não pode ser vazio.");
         ValidationUtils.checkVazio(pacienteDTO.getCpf(), "CPF não pode ser vazio.");
@@ -63,15 +63,14 @@ public class PacienteService {
         if (pacienteDTO.getIdade() == 0 && pacienteDTO.getDataNasc() == null)
             throw new ValidationException("Informe idade ou data de nascimento.");
 
+        Paciente paciente = op.get();
         paciente.setNome(pacienteDTO.getNome());
-        paciente.setCPF(pacienteDTO.getCpf());
+        paciente.setCpf(pacienteDTO.getCpf());
         paciente.setDataNasc(pacienteDTO.getDataNasc());
         paciente.setIdade(pacienteDTO.getIdade());
 
-        Paciente pacienteAtualizado = repo.save(paciente);
-
-        return PacienteDTO.toDTO(pacienteAtualizado);
-
+        return new PacienteDTO(repo.save(paciente));
+        
     }
 
     public void removePaciente(Long pacienteId) {
@@ -84,10 +83,10 @@ public class PacienteService {
     }
 
     public Long getCpfExistId(String cpf) {
-        Paciente paciente = repo.findByCPF(cpf);
-        if (paciente != null) {
-            return paciente.getId();
-        }
+        var op = repo.findByCpf(cpf);
+        if (op.isPresent())
+            return op.get().getId();
+
         return null;
     }
 }
