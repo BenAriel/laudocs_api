@@ -34,7 +34,7 @@ public class UsuarioController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/criar")
+    @PostMapping
     public ResponseEntity<?> createUser(@Valid @RequestBody UsuarioCreateDTO usuarioCreateDTO) {
         UsuarioDTO user = serv.createUser(usuarioCreateDTO);
         return ResponseEntity.ok(user);
