@@ -20,12 +20,21 @@ public class LaudoDTO {
 
     private String url;
 
+    private Long pacienteId; 
+    private Long consultaId;
 
     public LaudoDTO(Laudo laudo) {
         this.id = laudo.getId();
         this.size = laudo.getSize();
         this.type = laudo.getType();
         this.url = laudo.getUrl();
+
+        if (laudo.getPaciente() != null) {
+            this.pacienteId = laudo.getPaciente().getId();
+        }
+        if (laudo.getConsulta() != null) {
+            this.consultaId = laudo.getConsulta().getId();
+        }
     }
 }
 
