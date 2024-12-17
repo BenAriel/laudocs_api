@@ -39,6 +39,7 @@ public class ConsultaService {
         System.out.println("Paciente encontrado : " + paciente.getNome());
 
         Consulta consulta = new Consulta(consultaDTO, paciente);
+        consulta = repo.save(consulta);
         
         return new ConsultaDTO(consulta);
         
