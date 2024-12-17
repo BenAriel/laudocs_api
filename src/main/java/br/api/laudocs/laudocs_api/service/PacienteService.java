@@ -43,6 +43,7 @@ public class PacienteService {
         if (pacienteDTO.getIdade() == 0 && pacienteDTO.getDataNasc() == null)
             throw new ValidationException("Informe idade ou data de nascimento.");
 
+        
         Paciente paciente = repo.save(new Paciente(pacienteDTO));
         return new PacienteDTO(paciente);
     }

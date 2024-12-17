@@ -37,6 +37,12 @@ public class AuthenticationService {
 
         res.addHeader("Authorization", PREFIX + " " + JwtToken);
         res.addHeader("Access-Control-Expose-Headers", "Authorization");
+    try {
+        res.setContentType("application/json");
+        res.getWriter().write("{\"token\":\"" + PREFIX + " " + JwtToken + "\"}");
+    } catch (Exception e) {
+        throw new RuntimeException("Erro ao escrever token na resposta", e);
+    }
     }
 
     static public Authentication getAuthentication (HttpServletRequest request) {

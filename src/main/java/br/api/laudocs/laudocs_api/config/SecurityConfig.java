@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(HttpMethod.POST, "/api/v1/login", "/api/v1/usuario").permitAll()
+                                
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(new LoginFilter("/api/v1/login",authenticationManager),
