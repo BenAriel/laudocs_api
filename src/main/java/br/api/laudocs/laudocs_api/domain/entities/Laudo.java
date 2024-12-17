@@ -5,7 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -31,7 +33,12 @@ public class Laudo {
 
     @OneToOne(mappedBy = "laudo")
     private Consulta consulta;
-     @NonNull
+
+    @ManyToOne
+    @JoinColumn(name = "paciente_id") 
+    private Paciente paciente;
+
+    @NonNull
     private String url;
 
     @NonNull
@@ -46,7 +53,5 @@ public class Laudo {
     @Lob
     @Column(columnDefinition = "LONGBLOB")
     private byte[] content;
-
-    
 
 }
