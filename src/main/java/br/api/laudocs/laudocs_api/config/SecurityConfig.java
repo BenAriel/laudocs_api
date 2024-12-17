@@ -1,9 +1,8 @@
 package br.api.laudocs.laudocs_api.config;
 
 import br.api.laudocs.laudocs_api.service.UserDetailsServiceImpl;
-
 import br.api.laudocs.laudocs_api.api.filters.AuthorizationFilter;
-import br.api.laudocs.laudocs_api.api.filters.LoginFilter; 
+import br.api.laudocs.laudocs_api.api.filters.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,14 +25,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+
     private final UserDetailsServiceImpl userDetailsService;
+
     public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
@@ -46,31 +49,36 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", corsConfig);
         return source;
     }
+
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder( passwordEncoder());
+        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .requestMatchers(HttpMethod.POST, "/api/v1/login", "/api/v1/usuario").permitAll()
-                                
-                                .anyRequest().authenticated()
-                )
-                .addFilterBefore(new LoginFilter("/api/v1/login",authenticationManager),
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new AuthorizationFilter(), UsernamePasswordAuthenticationFilter.class) 
-                .authenticationManager(authenticationManager)
-                .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .headers(headers ->
-                        headers.frameOptions(Customizer.withDefaults()).disable() // Desabilita a proteção contra frame options
-                );
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authorizeRequests ->
+                authorizeRequests
+                    .requestMatchers(HttpMethod.POST, "/api/v1/login", "/api/v1/usuario").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/usuario").hasAnyRole( "ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/usuario/{userId}").hasAnyRole( "ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/usuario/alterar").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/usuario/remover/{userId}").hasRole("ADMIN")
+                    .anyRequest().authenticated()
+            )
+            .addFilterBefore(new LoginFilter("/api/v1/login", authenticationManager),
+                    UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new AuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .authenticationManager(authenticationManager)
+            .sessionManagement(sessionManagement ->
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .headers(headers ->
+                headers.frameOptions(Customizer.withDefaults()).disable() // Desabilita a proteção contra frame options
+            );
+
         return http.build();
     }
 }
-

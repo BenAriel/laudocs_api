@@ -4,7 +4,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import br.api.laudocs.laudocs_api.api.dto.UsuarioCreateDTO;
 import br.api.laudocs.laudocs_api.api.dto.UsuarioDTO;
+import br.api.laudocs.laudocs_api.enums.Role;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,6 +32,9 @@ public class Usuario {
     private String senha;
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     public Usuario(UsuarioDTO dto) {
         this.nome = dto.getNome();
         this.email = dto.getEmail();
@@ -38,6 +44,7 @@ public class Usuario {
         this.nome = dto.getNome();
         this.email = dto.getEmail();
         this.senha = encodePassword(dto.getSenha());
+        this.role = Role.valueOf(dto.getRole());
     }
     
     private String encodePassword(String password) {

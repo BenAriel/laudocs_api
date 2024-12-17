@@ -16,14 +16,16 @@ public class UsuarioDTO {
     private String nome;
     @Nonnull
     private String email;
+    private String role;
 
     public UsuarioDTO(Usuario user) {
         this.id = user.getId();
         this.nome = user.getNome();
         this.email = user.getEmail();
+        this.role = user.getRole().name();
     }
 
     public static UsuarioDTO toDTO(Usuario user) {
-        return new UsuarioDTO(user.getId(), user.getNome(), user.getEmail());
+        return new UsuarioDTO(user.getId(), user.getNome(), user.getEmail(), user.getRole().name());
     }
 }
