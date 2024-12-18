@@ -1,21 +1,21 @@
 package br.api.laudocs.laudocs_api.domain.entities;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import br.api.laudocs.laudocs_api.api.dto.UsuarioCreateDTO;
-import br.api.laudocs.laudocs_api.api.dto.UsuarioDTO;
-import br.api.laudocs.laudocs_api.enums.Role;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import br.api.laudocs.laudocs_api.api.dto.UsuarioCreateDTO;
+import br.api.laudocs.laudocs_api.api.dto.UsuarioDTO;
+import br.api.laudocs.laudocs_api.enums.Role;
+
+import java.util.Collection;
+import java.util.List;
 
 
 @Getter
@@ -24,7 +24,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tb_usuarios")
-public class Usuario {
+public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -43,12 +43,53 @@ public class Usuario {
     public Usuario(UsuarioCreateDTO dto) {
         this.nome = dto.getNome();
         this.email = dto.getEmail();
-        this.senha = encodePassword(dto.getSenha());
+        this.senha =(dto.getSenha());
         this.role = Role.valueOf(dto.getRole());
     }
-    
-    private String encodePassword(String password) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        return passwordEncoder.encode(password);
+
+     public Usuario(String nome,String email, String senha, Role role){
+        this.nome = nome;
+        this.email = email;
+        this.senha = senha;
+        this.role = role;
     }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if(this.role == Role.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @Override
+    public String getUsername() {
+        return nome;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public String getPassword() {
+        return senha;
+    }
+    
+    
 }

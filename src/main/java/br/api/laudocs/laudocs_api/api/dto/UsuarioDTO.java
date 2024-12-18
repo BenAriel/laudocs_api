@@ -1,6 +1,7 @@
 package br.api.laudocs.laudocs_api.api.dto;
 
 import br.api.laudocs.laudocs_api.domain.entities.Usuario;
+import br.api.laudocs.laudocs_api.enums.Role;
 import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,16 +17,16 @@ public class UsuarioDTO {
     private String nome;
     @Nonnull
     private String email;
-    private String role;
+    private Role role;
 
     public UsuarioDTO(Usuario user) {
         this.id = user.getId();
         this.nome = user.getNome();
         this.email = user.getEmail();
-        this.role = user.getRole().name();
+        this.role = user.getRole();
     }
 
     public static UsuarioDTO toDTO(Usuario user) {
-        return new UsuarioDTO(user.getId(), user.getNome(), user.getEmail(), user.getRole().name());
+        return new UsuarioDTO(user.getId(), user.getNome(), user.getEmail(), user.getRole());
     }
 }
