@@ -1,89 +1,120 @@
 package br.api.laudocs.laudocs_api.service;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-import br.api.laudocs.laudocs_api.api.dto.LaudoDTO;
+
+
+import br.api.laudocs.laudocs_api.api.dto.LaudoDTOresponse;
+import br.api.laudocs.laudocs_api.api.dto.LaudoDTOrequest;
+import br.api.laudocs.laudocs_api.api.dto.LaudoDTOresend;
 import br.api.laudocs.laudocs_api.domain.entities.Consulta;
 import br.api.laudocs.laudocs_api.domain.entities.Laudo;
 import br.api.laudocs.laudocs_api.domain.entities.Paciente;
 import br.api.laudocs.laudocs_api.domain.repository.ConsultaRepository;
 import br.api.laudocs.laudocs_api.domain.repository.LaudoRepository;
 import br.api.laudocs.laudocs_api.domain.repository.PacienteRepository;
+import br.api.laudocs.laudocs_api.exception.ValidationException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class LaudoService {
     @Autowired
     private LaudoRepository laudoRepository;
-
     @Autowired
     private PacienteRepository pacienteRepository;
-
     @Autowired
     private ConsultaRepository consultaRepository;
 
-    public LaudoDTO createLaudo(LaudoDTO laudoDTO) {
+    public List<LaudoDTOresponse> list(long patientId) 
+    {
+        pacienteRepository.findById(patientId).orElseThrow(() -> 
+            new ValidationException("Paciente não encontrado")
+        );
 
-        //Não necessariamente precisa ter um paciente ou consulta
-        Paciente paciente = pacienteRepository.findById(laudoDTO.getPacienteId()).orElse(null);
-        Consulta consulta = consultaRepository.findById(laudoDTO.getConsultaId()).orElse(null);
+        Optional<Laudo> documents = laudoRepository.findById(patientId);
 
-        Laudo laudo = new Laudo();
-        laudo.setPaciente(paciente);
-        laudo.setConsulta(consulta);
-        laudo.setType(laudoDTO.getType());
-        laudo.setSize(laudoDTO.getSize());
-        laudo.setUrl(laudoDTO.getUrl());
-
-        laudo = laudoRepository.save(laudo);
-        return new LaudoDTO(laudo);
+        return documents.stream().map(LaudoDTOresponse::new).collect(Collectors.toList());
     }
 
-    public List<LaudoDTO> getAllLaudos() {
-        return laudoRepository.findAll()
-                .stream()
-                .map(LaudoDTO::new)
-                .collect(Collectors.toList());
+    @Transactional(rollbackOn = Exception.class)
+    public LaudoDTOresponse save(LaudoDTOrequest request) throws IOException {
+        Consulta consulta = consultaRepository.findById(request.getConsultaId()).orElseThrow(() -> 
+            new ValidationException("Consulta não encontrada.")
+        );
+        if(consulta.getLaudo() != null) {
+            throw new ValidationException("Laudo já cadastrado para essa consulta.");
+        }
+
+        Paciente paciente = request.getPacienteId() > 0 ? pacienteRepository.findById(request.getPacienteId()).orElseThrow(() -> 
+            new ValidationException("Paciente não encontrado.")
+        ) : null;
+        MultipartFile file = request.getFile();
+
+        String fileName = Optional.ofNullable(file.getOriginalFilename())
+                                .map(StringUtils::cleanPath)
+                                .orElse("");
+
+        Laudo document= Laudo.builder()
+                                .url(fileName)
+                                .paciente(paciente)
+                                .contentType(file.getContentType())
+                                .size(file.getSize())
+                                .content(file.getBytes())
+                                .type(request.getType())
+                                .consulta(consulta)
+                                .build();
+
+        laudoRepository.save(document);
+
+        return new LaudoDTOresponse(document);
     }
 
-    public LaudoDTO getLaudoById(Long laudoId) {
-        Laudo laudo = laudoRepository.findById(laudoId)
-                .orElseThrow(() -> new RuntimeException("Laudo não encontrado"));
-        return new LaudoDTO(laudo);
+    @Transactional(rollbackOn= Exception.class)
+    public void delete( Long documentId)  {
+        laudoRepository.findById(documentId).orElseThrow(() -> 
+            new ValidationException("Paciente não encontrado.")
+        );
+
+        laudoRepository.deleteById(documentId);
+    }
+    @Transactional(rollbackOn= Exception.class)
+    public Laudo find( Long documentId) {
+
+        Laudo document = laudoRepository.findById(documentId).orElseThrow(
+            () -> new ValidationException("Documento não encontrado.")
+        );
+
+        return document;
     }
 
-    public LaudoDTO updateLaudo(Long laudoId, LaudoDTO laudoDTO) {
-        Laudo laudo = laudoRepository.findById(laudoId)
-                .orElseThrow(() -> new RuntimeException("Laudo não encontrado"));
+    @Transactional(rollbackOn = Exception.class)
+    public LaudoDTOresponse update(LaudoDTOresend request,Long usuarioId) throws IOException {
+        Laudo laudo = laudoRepository.findById(usuarioId).orElseThrow(() -> 
+            new ValidationException("Consulta não encontrada.")
+        );
+        MultipartFile file = request.getFile();
 
-        laudo.setType(laudoDTO.getType());
-        laudo.setSize(laudoDTO.getSize());
-        laudo.setUrl(laudoDTO.getUrl());
+        String fileName = Optional.ofNullable(file.getOriginalFilename())
+        .map(StringUtils::cleanPath)
+        .orElse("");
 
-        laudo = laudoRepository.save(laudo);
-        return new LaudoDTO(laudo);
+    laudo.setUrl(fileName);
+laudo.setContentType(file.getContentType());
+laudo.setContent(file.getBytes());
+laudo.setSize(file.getSize());
+laudo.setType(request.getType());
+
+        laudoRepository.save(laudo);
+
+        return new LaudoDTOresponse(laudo);
     }
-
-    public void deleteLaudo(Long laudoId) {
-        Laudo laudo = laudoRepository.findById(laudoId)
-                .orElseThrow(() -> new RuntimeException("Laudo não encontrado"));
-        laudoRepository.delete(laudo);
-    }
-
-    public List<LaudoDTO> getLaudosByPaciente(Long pacienteId) {
-        List<Laudo> laudos = laudoRepository.findByPacienteId(pacienteId);
-        return laudos.stream()
-                     .map(LaudoDTO::new)
-                     .toList();
-    }
-
-    public List<LaudoDTO> getLaudosByConsulta(Long consultaId) {
-        List<Laudo> laudos = laudoRepository.findByConsultaId(consultaId);
-        return laudos.stream()
-                     .map(LaudoDTO::new)
-                     .toList();
-    }
+        
 }

@@ -30,7 +30,6 @@ public class SecurityFilter extends OncePerRequestFilter {
             return;
         }
     
-        // Lógica do filtro para as outras rotas
         var token = this.recoverToken(request);
         if (token != null) {
             var email = tokenService.validateToken(token);

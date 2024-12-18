@@ -9,7 +9,7 @@ import br.api.laudocs.laudocs_api.domain.entities.Laudo;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LaudoDTO {
+public class LaudoDTOresponse {
 
     private Long id;
 
@@ -23,7 +23,7 @@ public class LaudoDTO {
     private Long pacienteId; 
     private Long consultaId;
 
-    public LaudoDTO(Laudo laudo) {
+    public LaudoDTOresponse(Laudo laudo) {
         this.id = laudo.getId();
         this.size = laudo.getSize();
         this.type = laudo.getType();

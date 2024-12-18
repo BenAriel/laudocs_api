@@ -26,17 +26,11 @@ public class ConsultaService {
     PacienteRepository pacienteRepository;
 
     public ConsultaDTO createConsulta(ConsultaDTO consultaDTO) {
-        System.out.println("Chegou no service. dados : " + consultaDTO.getPacienteId());
-        System.out.println("Chegou no service. dados : " + consultaDTO.getDataConsulta());
-        System.out.println("Chegou no service. dados : " + consultaDTO.getMedicoSolicitante());
-        
         ValidationUtils.checkVazio(consultaDTO.getDataConsulta(), "Data da consulta não pode ser vazia.");
         ValidationUtils.checkVazio(consultaDTO.getMedicoSolicitante(), "Médico solicitante não pode ser vazio.");
         
         Paciente paciente = pacienteRepository.findById(consultaDTO.getPacienteId())
         .orElseThrow(() -> new IllegalArgumentException("Paciente não encontrado com ID: " + consultaDTO.getPacienteId()));
-
-        System.out.println("Paciente encontrado : " + paciente.getNome());
 
         Consulta consulta = new Consulta(consultaDTO, paciente);
         consulta = repo.save(consulta);

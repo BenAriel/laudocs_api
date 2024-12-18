@@ -1,6 +1,7 @@
 package br.api.laudocs.laudocs_api.domain.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,8 @@ public class Usuario implements UserDetails {
     private Long id;
     private String nome;
     private String senha;
+  
+    @Email
     private String email;
 
     @Enumerated(EnumType.STRING)

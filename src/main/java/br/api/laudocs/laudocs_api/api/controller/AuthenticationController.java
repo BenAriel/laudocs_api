@@ -6,6 +6,7 @@ import br.api.laudocs.laudocs_api.api.dto.RegisterDTO;
 import br.api.laudocs.laudocs_api.config.TokenService;
 import br.api.laudocs.laudocs_api.domain.entities.Usuario;
 import br.api.laudocs.laudocs_api.domain.repository.UsuarioRepository;
+import br.api.laudocs.laudocs_api.exception.ValidationUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,11 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody @Valid RegisterDTO data) {
+        ValidationUtils.checkVazio(data.nome(), "Nome não pode ser vazio.");
+        ValidationUtils.checkVazio(data.senha(), "Senha não pode ser vazia.");
+        ValidationUtils.checkVazio(data.email(), "Email não pode ser vazio.");
+
+
         if (this.repository.findByEmail(data.email()).isPresent()) {
             System.out.println("Email já cadastrado");
             return ResponseEntity.badRequest().body("Email já cadastrado");

@@ -19,7 +19,6 @@ public class ConsultaController {
 
     @PostMapping
     public ResponseEntity<ConsultaDTO> criarConsulta(@RequestBody ConsultaDTO consultaDTO) {
-         System.out.println("Chegou aqui : " + consultaDTO.getPacienteId());
         ResponseEntity<ConsultaDTO> response = new ResponseEntity<ConsultaDTO>(
                 service.createConsulta(consultaDTO), HttpStatus.OK);
         return response;

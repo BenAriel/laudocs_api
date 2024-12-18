@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import br.api.laudocs.laudocs_api.api.dto.PacienteDTO;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,8 +28,11 @@ public class Paciente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String cpf;
+
     private String nome;
+  
     private LocalDate dataNasc;
+   
     private int idade;
 
     @OneToMany(mappedBy = "paciente")
