@@ -3,6 +3,8 @@ package br.api.laudocs.laudocs_api.domain.entities;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import br.api.laudocs.laudocs_api.api.dto.PacienteDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +32,10 @@ public class Paciente {
     private String cpf;
 
     private String nome;
-  
+
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @Column(name = "data_nasc")
     private LocalDate dataNasc;
    
     private int idade;

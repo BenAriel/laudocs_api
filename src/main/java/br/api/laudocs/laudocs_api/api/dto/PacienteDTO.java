@@ -2,6 +2,8 @@ package br.api.laudocs.laudocs_api.api.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import br.api.laudocs.laudocs_api.domain.entities.Paciente;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +18,10 @@ public class PacienteDTO {
     private Long id;
     private String cpf;
     private String nome;
+
+     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate dataNasc;
+    
     private int idade;
 
     public PacienteDTO(Paciente paciente) {

@@ -33,6 +33,15 @@ public class PacienteService {
         return new PacienteDTO(op.get());
     }
 
+    public PacienteDTO getPacienteByCpf(String cpf) {
+        var op = repo.findByCpf(cpf);
+
+        if (!op.isPresent())
+            throw new ValidationException("Paciente não encontrado.");
+
+        return new PacienteDTO(op.get());
+    }
+
     public PacienteDTO createPaciente(PacienteDTO pacienteDTO) {
         ValidationUtils.checkVazio(pacienteDTO.getNome(), "Nome não pode ser vazio.");
         ValidationUtils.checkVazio(pacienteDTO.getCpf(), "CPF não pode ser vazio.");

@@ -32,6 +32,11 @@ public class PacienteController {
         return ResponseEntity.ok(serv.getPaciente(pacienteId));
     }
 
+    @GetMapping("/cpf/{cpf}")
+    public ResponseEntity<?> getPacienteByCpf(@PathVariable String cpf) {
+        return ResponseEntity.ok(serv.getPacienteByCpf(cpf));
+    }
+
     @PostMapping("/criar")
     public ResponseEntity<?> createPaciente(@Valid @RequestBody PacienteDTO pacienteDTO) {
         return ResponseEntity.ok(serv.createPaciente(pacienteDTO));

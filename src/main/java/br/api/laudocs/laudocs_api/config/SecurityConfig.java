@@ -24,10 +24,10 @@ public class SecurityConfig {
     SecurityFilter securityFilter;
 
   @Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
     return httpSecurity
             .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configure(httpSecurity)) // Habilita e configura o CORS
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Associa a configuração de CORS corretamente
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
@@ -47,11 +47,11 @@ public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws
 @Bean
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.addAllowedOrigin("*"); // Altere conforme necessário (Ex.: "http://localhost:3000")
+    configuration.addAllowedOrigin("http://localhost:3000"); // Defina explicitamente o domínio do frontend
     configuration.addAllowedMethod("*"); // Permite todos os métodos (GET, POST, etc.)
     configuration.addAllowedHeader("*"); // Permite todos os headers
-    configuration.setAllowCredentials(true); // Permite o envio de credenciais (cookies, headers)
-    
+    configuration.setAllowCredentials(true); // Permite envio de credenciais (cookies, headers)
+
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration); // Aplica a configuração para todos os endpoints
     return source;
