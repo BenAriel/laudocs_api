@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ConsultaDTO {
+public class ConsultaDTOrequest {
     private Long id;
     
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
@@ -25,7 +25,7 @@ public class ConsultaDTO {
     private String medicoSolicitante;
     private Long laudoId;
 
-    public ConsultaDTO(Consulta consulta) {
+    public ConsultaDTOrequest(Consulta consulta) {
         this.id = consulta.getId();
         this.dataConsulta = consulta.getDataConsulta();
         this.pacienteId = consulta.getPaciente().getId();
@@ -33,7 +33,7 @@ public class ConsultaDTO {
         this.laudoId = consulta.getLaudo() != null ? consulta.getLaudo().getId() : null;
     }
 
-    public static ConsultaDTO toDTO(Consulta consulta) {
-        return new ConsultaDTO(consulta);
+    public static ConsultaDTOrequest toDTO(Consulta consulta) {
+        return new ConsultaDTOrequest(consulta);
     }
 }

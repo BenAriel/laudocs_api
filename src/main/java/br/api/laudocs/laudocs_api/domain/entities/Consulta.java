@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import br.api.laudocs.laudocs_api.api.dto.ConsultaDTO;
+import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOrequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -46,7 +46,7 @@ public class Consulta {
     @JoinColumn(name = "id_laudo")
     private Laudo laudo;
     
-    public Consulta(ConsultaDTO dto, Paciente paciente) {
+    public Consulta(ConsultaDTOrequest dto, Paciente paciente) {
         this.dataConsulta = dto.getDataConsulta();
         this.paciente = paciente;
         this.medicoSolicitante = dto.getMedicoSolicitante();

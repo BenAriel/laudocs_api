@@ -2,7 +2,8 @@ package br.api.laudocs.laudocs_api.service;
 
 
 import br.api.laudocs.laudocs_api.domain.entities.Consulta;
-import br.api.laudocs.laudocs_api.api.dto.ConsultaDTO;
+import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOrequest;
+import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOresponse;
 import br.api.laudocs.laudocs_api.domain.repository.ConsultaRepository;
 import br.api.laudocs.laudocs_api.domain.repository.PacienteRepository;
 import br.api.laudocs.laudocs_api.exception.ValidationException;
@@ -25,7 +26,7 @@ public class ConsultaService {
     @Autowired
     PacienteRepository pacienteRepository;
 
-    public ConsultaDTO createConsulta(ConsultaDTO consultaDTO) {
+    public ConsultaDTOresponse createConsulta(ConsultaDTOrequest consultaDTO) {
         ValidationUtils.checkVazio(consultaDTO.getDataConsulta(), "Data da consulta não pode ser vazia.");
         ValidationUtils.checkVazio(consultaDTO.getMedicoSolicitante(), "Médico solicitante não pode ser vazio.");
         
@@ -35,46 +36,50 @@ public class ConsultaService {
         Consulta consulta = new Consulta(consultaDTO, paciente);
         consulta = repo.save(consulta);
         
-        return new ConsultaDTO(consulta);
+        return new ConsultaDTOresponse(consulta);
         
     }
 
-    public List<ConsultaDTO> getAllConsultas() {
-        List<Consulta> consultas = repo.findAll();
-
-         return consultas.stream().map(ConsultaDTO::toDTO).collect(Collectors.toList());
+    public ConsultaDTOresponse getConsulta(Long id) {
+        Consulta consulta = repo.findById(id)
+            .orElseThrow(() -> new RuntimeException("Consulta não encontrada!"));
+    
+        return new ConsultaDTOresponse(consulta);
     }
 
-    public ConsultaDTO getConsulta(Long idConsulta) {
-        Consulta consulta = repo.findById(idConsulta)
-                                .orElseThrow(() -> new ValidationException("Consulta não encontrada."));
-        return ConsultaDTO.toDTO(consulta);
+    public List<ConsultaDTOresponse> getAllConsultas() {
+        List<Consulta> consultas = repo.findAll();
+    
+        return consultas.stream()
+            .map(consulta -> new ConsultaDTOresponse(consulta))
+            .collect(Collectors.toList());
     }
     
+    
 
-    public ConsultaDTO updateConsulta(ConsultaDTO consultaDTO) {
+    public ConsultaDTOresponse updateConsulta(ConsultaDTOrequest consultaDTO) {
         Consulta consulta = repo.findById(consultaDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Consulta não encontrada!"));
-
+    
         ValidationUtils.checkVazio(consultaDTO.getDataConsulta(), "Data da consulta não pode ser vazia.");
         ValidationUtils.checkVazio(consultaDTO.getMedicoSolicitante(), "Médico solicitante não pode ser vazio.");
         ValidationUtils.checkVazio(consultaDTO.getPacienteId(), "Paciente não informado.");
-
+    
         consulta.setDataConsulta(consultaDTO.getDataConsulta());
         consulta.setMedicoSolicitante(consultaDTO.getMedicoSolicitante());
-
+    
         Paciente paciente = pacienteRepository.findById(consultaDTO.getPacienteId())
-        .orElseThrow(() -> new ValidationException("Paciente não encontrado."));
-            consulta.setPaciente(paciente);
-
+            .orElseThrow(() -> new ValidationException("Paciente não encontrado."));
+        consulta.setPaciente(paciente);
+    
         if (consultaDTO.getLaudoId() != null) {
             Laudo laudo = new Laudo();
             laudo.setId(consultaDTO.getLaudoId());
             consulta.setLaudo(laudo);
         }
-
+    
         Consulta consultaAtualizada = repo.save(consulta);
-        return ConsultaDTO.toDTO(consultaAtualizada);
+        return new ConsultaDTOresponse(consultaAtualizada);
     }
 
     public void deleteConsulta(Long id) {

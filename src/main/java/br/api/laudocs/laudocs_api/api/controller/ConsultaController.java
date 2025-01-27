@@ -1,7 +1,8 @@
 package br.api.laudocs.laudocs_api.api.controller;
 
 
-import br.api.laudocs.laudocs_api.api.dto.ConsultaDTO;
+import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOrequest;
+import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOresponse;
 import br.api.laudocs.laudocs_api.service.ConsultaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,31 +19,31 @@ public class ConsultaController {
     ConsultaService service;
 
     @PostMapping
-    public ResponseEntity<ConsultaDTO> criarConsulta(@RequestBody ConsultaDTO consultaDTO) {
-        ResponseEntity<ConsultaDTO> response = new ResponseEntity<ConsultaDTO>(
+    public ResponseEntity<ConsultaDTOresponse> criarConsulta(@RequestBody ConsultaDTOrequest consultaDTO) {
+        ResponseEntity<ConsultaDTOresponse> response = new ResponseEntity<ConsultaDTOresponse>(
                 service.createConsulta(consultaDTO), HttpStatus.OK);
         return response;
     }
 
     @GetMapping
-    public ResponseEntity<List<ConsultaDTO>> listarConsultas() {
-        ResponseEntity<List<ConsultaDTO>> response =
-                new ResponseEntity<List<ConsultaDTO>>(service.getAllConsultas(),
+    public ResponseEntity<List<ConsultaDTOresponse>> listarConsultas() {
+        ResponseEntity<List<ConsultaDTOresponse>> response =
+                new ResponseEntity<List<ConsultaDTOresponse>>(service.getAllConsultas(),
                         HttpStatus.OK);
         return response;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ConsultaDTO> buscarConsultaPorId(@PathVariable Long id) {
-        ResponseEntity<ConsultaDTO> response =
-                new ResponseEntity<ConsultaDTO>(service.getConsulta(id), HttpStatus.OK);
+    public ResponseEntity<ConsultaDTOresponse> buscarConsultaPorId(@PathVariable Long id) {
+        ResponseEntity<ConsultaDTOresponse> response =
+                new ResponseEntity<ConsultaDTOresponse>(service.getConsulta(id), HttpStatus.OK);
         return response;
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ConsultaDTO> atualizarConsulta( @RequestBody ConsultaDTO consultaDTO) {
+    public ResponseEntity<ConsultaDTOresponse> atualizarConsulta( @RequestBody ConsultaDTOrequest consultaDTO) {
         
-        ResponseEntity<ConsultaDTO> response = new ResponseEntity<ConsultaDTO>(
+        ResponseEntity<ConsultaDTOresponse> response = new ResponseEntity<ConsultaDTOresponse>(
                 service.updateConsulta(consultaDTO), HttpStatus.OK);
         return response;
     }
