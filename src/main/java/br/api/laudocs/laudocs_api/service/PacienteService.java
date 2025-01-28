@@ -1,6 +1,7 @@
 package br.api.laudocs.laudocs_api.service;
 
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.api.laudocs.laudocs_api.api.dto.PacienteDTO;
+import br.api.laudocs.laudocs_api.api.dto.PacienteDTOupdate;
 import br.api.laudocs.laudocs_api.domain.entities.Paciente;
 import br.api.laudocs.laudocs_api.domain.repository.PacienteRepository;
 import br.api.laudocs.laudocs_api.exception.ValidationUtils;
@@ -57,31 +59,35 @@ public class PacienteService {
         return new PacienteDTO(paciente);
     }
 
-    public PacienteDTO updatePaciente(PacienteDTO pacienteDTO) {
-        var op = repo.findById(pacienteDTO.getId());
+   public PacienteDTO updatePaciente(PacienteDTOupdate pacienteDTO) {
+    var op = repo.findById(pacienteDTO.getId());
 
-        if (!op.isPresent())
-            throw new ValidationException("Paciente não existe.");
+    if (!op.isPresent())
+        throw new ValidationException("Paciente não existe.");
 
-        ValidationUtils.checkVazio(pacienteDTO.getNome(), "Nome não pode ser vazio.");
-        ValidationUtils.checkVazio(pacienteDTO.getCpf(), "CPF não pode ser vazio.");
+    ValidationUtils.checkVazio(pacienteDTO.getNome(), "Nome não pode ser vazio.");
 
-        Long idCpf = getCpfExistId(pacienteDTO.getCpf());
-        if (idCpf != null && idCpf != pacienteDTO.getId())
-            throw new ValidationException("CPF já cadastrado no sistema.");
+    if (pacienteDTO.getDataNasc() == null)
+        throw new ValidationException("Data de nascimento não pode ser nula.");
 
-        if (pacienteDTO.getIdade() == 0 && pacienteDTO.getDataNasc() == null)
-            throw new ValidationException("Informe idade ou data de nascimento.");
+    int idade = calcularIdade(pacienteDTO.getDataNasc());
 
-        Paciente paciente = op.get();
-        paciente.setNome(pacienteDTO.getNome());
-        paciente.setCpf(pacienteDTO.getCpf());
-        paciente.setDataNasc(pacienteDTO.getDataNasc());
-        paciente.setIdade(pacienteDTO.getIdade());
+    Paciente paciente = op.get();
+    paciente.setNome(pacienteDTO.getNome());
+    paciente.setDataNasc(pacienteDTO.getDataNasc());
+    paciente.setIdade(idade);
 
-        return new PacienteDTO(repo.save(paciente));
-        
-    }
+    return new PacienteDTO(repo.save(paciente));
+}
+
+
+// Método auxiliar para calcular a idade
+private int calcularIdade(LocalDate dataNasc) {
+    LocalDate hoje = LocalDate.now();
+    return hoje.getYear() - dataNasc.getYear() -
+            (hoje.getDayOfYear() < dataNasc.getDayOfYear() ? 1 : 0);
+}
+
 
     public void removePaciente(Long pacienteId) {
         var op = repo.findById(pacienteId);

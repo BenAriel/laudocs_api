@@ -4,16 +4,17 @@ package br.api.laudocs.laudocs_api.service;
 import br.api.laudocs.laudocs_api.domain.entities.Consulta;
 import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOrequest;
 import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOresponse;
+import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOupdate;
 import br.api.laudocs.laudocs_api.domain.repository.ConsultaRepository;
 import br.api.laudocs.laudocs_api.domain.repository.PacienteRepository;
 import br.api.laudocs.laudocs_api.exception.ValidationException;
 import br.api.laudocs.laudocs_api.exception.ValidationUtils;
 import br.api.laudocs.laudocs_api.domain.entities.Paciente;
-import br.api.laudocs.laudocs_api.domain.entities.Laudo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,30 +58,41 @@ public class ConsultaService {
     
     
 
-    public ConsultaDTOresponse updateConsulta(ConsultaDTOrequest consultaDTO) {
+    public ConsultaDTOresponse updateConsulta(ConsultaDTOupdate consultaDTO) {
         Consulta consulta = repo.findById(consultaDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Consulta não encontrada!"));
     
-        ValidationUtils.checkVazio(consultaDTO.getDataConsulta(), "Data da consulta não pode ser vazia.");
         ValidationUtils.checkVazio(consultaDTO.getMedicoSolicitante(), "Médico solicitante não pode ser vazio.");
         ValidationUtils.checkVazio(consultaDTO.getPacienteId(), "Paciente não informado.");
     
-        consulta.setDataConsulta(consultaDTO.getDataConsulta());
+        
         consulta.setMedicoSolicitante(consultaDTO.getMedicoSolicitante());
     
         Paciente paciente = pacienteRepository.findById(consultaDTO.getPacienteId())
             .orElseThrow(() -> new ValidationException("Paciente não encontrado."));
-        consulta.setPaciente(paciente);
+
+            ValidationUtils.checkVazio(consultaDTO.getNomePaciente(), "Paciente não pode ter nome vazio.");
+            ValidationUtils.checkVazio(consultaDTO.getDataNascPaciente(), "Paciente não pode ter data de nascimento vazio.");
+
+            
+            int idade = calcularIdade(consultaDTO.getDataNascPaciente());
+            paciente.setDataNasc(consultaDTO.getDataNascPaciente());
+            paciente.setIdade(idade);
+            paciente.setNome(consultaDTO.getNomePaciente());
+
+            consulta.setPaciente(paciente);
     
-        if (consultaDTO.getLaudoId() != null) {
-            Laudo laudo = new Laudo();
-            laudo.setId(consultaDTO.getLaudoId());
-            consulta.setLaudo(laudo);
-        }
-    
+           pacienteRepository.save(paciente);
         Consulta consultaAtualizada = repo.save(consulta);
         return new ConsultaDTOresponse(consultaAtualizada);
     }
+
+    
+    private int calcularIdade(LocalDate dataNasc) {
+    LocalDate hoje = LocalDate.now();
+    return hoje.getYear() - dataNasc.getYear() -
+            (hoje.getDayOfYear() < dataNasc.getDayOfYear() ? 1 : 0);
+}
 
     public void deleteConsulta(Long id) {
         repo.deleteById(id);

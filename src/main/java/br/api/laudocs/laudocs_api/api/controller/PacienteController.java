@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.api.laudocs.laudocs_api.api.dto.PacienteDTO;
+import br.api.laudocs.laudocs_api.api.dto.PacienteDTOupdate;
 import br.api.laudocs.laudocs_api.service.PacienteService;
 import jakarta.validation.Valid;
 
@@ -43,7 +44,7 @@ public class PacienteController {
     }
 
     @PutMapping("/alterar")
-    public ResponseEntity<?> updatePaciente(@Valid @RequestBody PacienteDTO pacienteDTO) {
+    public ResponseEntity<?> updatePaciente(@Valid @RequestBody PacienteDTOupdate pacienteDTO) {
         return ResponseEntity.ok(serv.updatePaciente(pacienteDTO));
     }
 

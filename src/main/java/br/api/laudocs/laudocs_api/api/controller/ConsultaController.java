@@ -3,6 +3,7 @@ package br.api.laudocs.laudocs_api.api.controller;
 
 import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOrequest;
 import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOresponse;
+import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOupdate;
 import br.api.laudocs.laudocs_api.service.ConsultaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class ConsultaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ConsultaDTOresponse> atualizarConsulta( @RequestBody ConsultaDTOrequest consultaDTO) {
+    public ResponseEntity<ConsultaDTOresponse> atualizarConsulta( @RequestBody ConsultaDTOupdate consultaDTO) {
         
         ResponseEntity<ConsultaDTOresponse> response = new ResponseEntity<ConsultaDTOresponse>(
                 service.updateConsulta(consultaDTO), HttpStatus.OK);

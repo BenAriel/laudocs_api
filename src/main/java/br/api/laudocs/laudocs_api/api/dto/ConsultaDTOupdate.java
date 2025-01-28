@@ -16,26 +16,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ConsultaDTOresponse {
+public class ConsultaDTOupdate {
     private Long id;
     
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    private LocalDate dataConsulta;
+    private LocalDate dataNascPaciente;
     private Long pacienteId;
     private String medicoSolicitante;
-    private Long laudoId;
-    private String nomePaiente;
-    private int idadePaciente;
-    private LocalDate dataNascPaciente;
+    private String nomePaciente;
 
-    public ConsultaDTOresponse(Consulta consulta) {
+    public ConsultaDTOupdate(Consulta consulta) {
         this.id = consulta.getId();
-        this.dataConsulta = consulta.getDataConsulta();
         this.pacienteId = consulta.getPaciente().getId();
         this.medicoSolicitante = consulta.getMedicoSolicitante();
-        this.laudoId = consulta.getLaudo() != null ? consulta.getLaudo().getId() : null;
-        this.nomePaiente = consulta.getPaciente().getNome();
-        this.idadePaciente = consulta.getPaciente().getIdade();
+        this.nomePaciente = consulta.getPaciente().getNome();
         this.dataNascPaciente = consulta.getPaciente().getDataNasc();
 
     }
