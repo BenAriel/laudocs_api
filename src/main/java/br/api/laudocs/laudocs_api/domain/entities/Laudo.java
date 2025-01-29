@@ -1,21 +1,7 @@
 package br.api.laudocs.laudocs_api.domain.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import io.micrometer.common.lang.NonNull;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
@@ -31,27 +17,27 @@ public class Laudo {
 
     private String descricao;
 
-    @OneToOne(mappedBy = "laudo")
+    @OneToOne
+    @JoinColumn(name = "consulta_id", nullable = false, unique = true) // Garante unicidade
     private Consulta consulta;
 
     @ManyToOne
-    @JoinColumn(name = "paciente_id") 
+    @JoinColumn(name = "paciente_id", nullable = false)
     private Paciente paciente;
 
-    @NonNull
+    @Column(nullable = false)
     private String url;
 
-    @NonNull
+    @Column(nullable = false)
     private String contentType;
 
-    @NonNull
+    @Column(nullable = false)
     private String type;
 
-    @NonNull
+    @Column(nullable = false)
     private Long size;
 
     @Lob
     @Column(columnDefinition = "LONGBLOB")
     private byte[] content;
-
 }

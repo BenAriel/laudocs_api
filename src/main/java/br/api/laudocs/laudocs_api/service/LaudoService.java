@@ -46,34 +46,41 @@ public class LaudoService {
 
     @Transactional(rollbackOn = Exception.class)
     public LaudoDTOresponse save(LaudoDTOrequest request) throws IOException {
-        Consulta consulta = consultaRepository.findById(request.getConsultaId()).orElseThrow(() -> 
-            new ValidationException("Consulta não encontrada.")
-        );
-        if(consulta.getLaudo() != null) {
+        Consulta consulta = consultaRepository.findById(request.getConsultaId())
+                .orElseThrow(() -> new ValidationException("Consulta não encontrada."));
+    
+        if (consulta.getLaudo() != null) {
             throw new ValidationException("Laudo já cadastrado para essa consulta.");
         }
-
-        Paciente paciente = request.getPacienteId() > 0 ? pacienteRepository.findById(request.getPacienteId()).orElseThrow(() -> 
-            new ValidationException("Paciente não encontrado.")
-        ) : null;
+    
+        if (consulta.getPaciente().getId() == null) {
+            throw new ValidationException("Paciente não encontrado.");
+        }
+    
+        Paciente paciente = consulta.getPaciente();
         MultipartFile file = request.getFile();
-
+    
         String fileName = Optional.ofNullable(file.getOriginalFilename())
-                                .map(StringUtils::cleanPath)
-                                .orElse("");
-
-        Laudo document= Laudo.builder()
-                                .url(fileName)
-                                .paciente(paciente)
-                                .contentType(file.getContentType())
-                                .size(file.getSize())
-                                .content(file.getBytes())
-                                .type(request.getType())
-                                .consulta(consulta)
-                                .build();
-
+                .map(StringUtils::cleanPath)
+                .orElse("");
+    
+        Laudo document = Laudo.builder()
+                .url(fileName)
+                .paciente(paciente)
+                .contentType(file.getContentType())
+                .size(file.getSize())
+                .content(file.getBytes())
+                .type(request.getType())
+                .consulta(consulta) // Associa a consulta ao laudo
+                .build();
+    
+        // Associa o laudo à consulta antes de salvar
+        consulta.setLaudo(document);
+    
+        // Salva ambos os objetos
         laudoRepository.save(document);
-
+        consultaRepository.save(consulta);
+    
         return new LaudoDTOresponse(document);
     }
 

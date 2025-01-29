@@ -15,8 +15,6 @@ public class SseController {
 
     @Autowired
     private SseService sseService;
-
-    // Endpoint para o frontend se inscrever para receber eventos
     @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe() {
         return sseService.subscribe();

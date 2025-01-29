@@ -1,23 +1,11 @@
 package br.api.laudocs.laudocs_api.domain.entities;
 
 import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOrequest;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
@@ -42,10 +30,9 @@ public class Consulta {
     @Column(nullable = false, length = 100)
     private String medicoSolicitante;
 
-    @OneToOne
-    @JoinColumn(name = "id_laudo")
+    @OneToOne(mappedBy = "consulta", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Laudo laudo;
-    
+
     public Consulta(ConsultaDTOrequest dto, Paciente paciente) {
         this.dataConsulta = dto.getDataConsulta();
         this.paciente = paciente;

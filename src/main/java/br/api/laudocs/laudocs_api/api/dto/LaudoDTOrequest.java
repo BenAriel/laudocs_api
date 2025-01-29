@@ -14,8 +14,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LaudoDTOrequest {
-    @Min(value = 1, message = "O id do paciente deve ser maior que 0")
-    private long pacienteId;
 
     @Min(value = 1, message = "O id da consulta deve ser maior que 0")
     private long consultaId;
