@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import br.api.laudocs.laudocs_api.domain.entities.Consulta;
+import br.api.laudocs.laudocs_api.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class ConsultaDTOresponse {
     private String nomePaiente;
     private int idadePaciente;
     private LocalDate dataNascPaciente;
+    private Status status;
 
     public ConsultaDTOresponse(Consulta consulta) {
         this.id = consulta.getId();
@@ -37,6 +39,7 @@ public class ConsultaDTOresponse {
         this.nomePaiente = consulta.getPaciente().getNome();
         this.idadePaciente = consulta.getPaciente().getIdade();
         this.dataNascPaciente = consulta.getPaciente().getDataNasc();
+        this.status = consulta.getStatus();
 
     }
 

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOrequest;
+import br.api.laudocs.laudocs_api.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,8 @@ public class Consulta {
     @JoinColumn(name = "id_paciente", nullable = false)
     private Paciente paciente;
 
+    private Status status;
+
     @Column(nullable = false, length = 100)
     private String medicoSolicitante;
 
@@ -37,5 +40,10 @@ public class Consulta {
         this.dataConsulta = dto.getDataConsulta();
         this.paciente = paciente;
         this.medicoSolicitante = dto.getMedicoSolicitante();
+        this.status = Status.FILA;
+    }
+
+    public void consultaRealizada() {
+        this.status = Status.FINALIZADA;
     }
 }

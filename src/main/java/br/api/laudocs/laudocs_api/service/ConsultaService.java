@@ -6,6 +6,7 @@ import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOresponse;
 import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOupdate;
 import br.api.laudocs.laudocs_api.domain.repository.ConsultaRepository;
 import br.api.laudocs.laudocs_api.domain.repository.PacienteRepository;
+import br.api.laudocs.laudocs_api.enums.Status;
 import br.api.laudocs.laudocs_api.exception.ValidationException;
 import br.api.laudocs.laudocs_api.exception.ValidationUtils;
 import br.api.laudocs.laudocs_api.domain.entities.Paciente;
@@ -43,6 +44,20 @@ public class ConsultaService {
         return new ConsultaDTOresponse(consulta);
     }
 
+
+    public ConsultaDTOresponse updasteStatus(Long id) {
+        Consulta consulta = repo.findById(id)
+            .orElseThrow(() -> new RuntimeException("Consulta não encontrada!"));
+    
+        consulta.consultaRealizada();
+    
+        Consulta consultaAtualizada = repo.save(consulta);
+
+        sseService.sendEvent("consulta-atualizada", consultaAtualizada);
+        
+        return new ConsultaDTOresponse(consultaAtualizada);
+    }
+
     public ConsultaDTOresponse getConsulta(Long id) {
         Consulta consulta = repo.findById(id)
             .orElseThrow(() -> new RuntimeException("Consulta não encontrada!"));
@@ -54,6 +69,7 @@ public class ConsultaService {
         List<Consulta> consultas = repo.findAll();
     
         return consultas.stream()
+            .filter(consulta -> consulta.getStatus().equals(Status.FILA))
             .map(consulta -> new ConsultaDTOresponse(consulta))
             .collect(Collectors.toList());
     }

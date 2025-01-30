@@ -49,6 +49,13 @@ public class ConsultaController {
         return response;
     }
 
+    @PutMapping("/updateStatus/{id}")
+    public ResponseEntity<ConsultaDTOresponse> atualizarStatusConsulta(@PathVariable Long id) {
+        ResponseEntity<ConsultaDTOresponse> response = new ResponseEntity<ConsultaDTOresponse>(
+                service.updasteStatus(id), HttpStatus.OK);
+        return response;
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirConsulta(@PathVariable Long id) {
         service.deleteConsulta(id);
