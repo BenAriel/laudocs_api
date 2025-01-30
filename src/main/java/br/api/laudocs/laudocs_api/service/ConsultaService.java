@@ -98,9 +98,10 @@ public class ConsultaService {
         Consulta consulta = repo.findById(id)
             .orElseThrow(() -> new RuntimeException("Consulta não encontrada!"));
 
+            sseService.sendEvent("consulta-removida", id);
+
         repo.deleteById(id);
 
-        sseService.sendEvent("consulta-removida", consulta);
        
     }
 }

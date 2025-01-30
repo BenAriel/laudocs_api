@@ -30,7 +30,7 @@ public class Consulta {
     @Column(nullable = false, length = 100)
     private String medicoSolicitante;
 
-    @OneToOne(mappedBy = "consulta", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToOne(mappedBy = "consulta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Laudo laudo;
 
     public Consulta(ConsultaDTOrequest dto, Paciente paciente) {

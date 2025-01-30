@@ -18,9 +18,9 @@ public class Laudo {
     private String descricao;
 
     @OneToOne
-    @JoinColumn(name = "consulta_id", nullable = false, unique = true) // Garante unicidade
+    @JoinColumn(name = "consulta_id", nullable = false, unique = true)
     private Consulta consulta;
-
+    
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable = false)
     private Paciente paciente;
