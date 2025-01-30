@@ -1,7 +1,10 @@
 package br.api.laudocs.laudocs_api.domain.entities;
 
 import java.time.LocalDate;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOrequest;
 import br.api.laudocs.laudocs_api.enums.Status;
@@ -33,8 +36,9 @@ public class Consulta {
     @Column(nullable = false, length = 100)
     private String medicoSolicitante;
 
-    @OneToOne(mappedBy = "consulta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private Laudo laudo;
+    @OneToMany(mappedBy = "consulta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<Laudo> laudos;
 
     public Consulta(ConsultaDTOrequest dto, Paciente paciente) {
         this.dataConsulta = dto.getDataConsulta();

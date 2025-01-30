@@ -39,8 +39,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/usuario").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/usuario/alterar").hasRole("ADMIN")
                         .requestMatchers("/ws/**").permitAll() // Permite acesso ao WebSocket
-                        .requestMatchers("/sse/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/sse/**").permitAll() // Permite acesso ao SSE
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

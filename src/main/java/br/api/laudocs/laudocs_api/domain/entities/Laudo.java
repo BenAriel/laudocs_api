@@ -1,5 +1,6 @@
 package br.api.laudocs.laudocs_api.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,16 +12,18 @@ import lombok.*;
 @Builder
 @Table(name = "tb_laudos")
 public class Laudo {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String descricao;
 
-    @OneToOne
-    @JoinColumn(name = "consulta_id", nullable = false, unique = true)
+    @ManyToOne
+    @JoinColumn(name = "consulta_id", nullable = false)
+    @JsonBackReference
     private Consulta consulta;
-    
+
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable = false)
     private Paciente paciente;

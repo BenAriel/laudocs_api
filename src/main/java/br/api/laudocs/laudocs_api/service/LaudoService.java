@@ -49,10 +49,6 @@ public class LaudoService {
         Consulta consulta = consultaRepository.findById(request.getConsultaId())
                 .orElseThrow(() -> new ValidationException("Consulta não encontrada."));
     
-        if (consulta.getLaudo() != null) {
-            throw new ValidationException("Laudo já cadastrado para essa consulta.");
-        }
-    
         if (consulta.getPaciente().getId() == null) {
             throw new ValidationException("Paciente não encontrado.");
         }
@@ -71,11 +67,9 @@ public class LaudoService {
                 .size(file.getSize())
                 .content(file.getBytes())
                 .type(request.getType())
-                .consulta(consulta) // Associa a consulta ao laudo
+                .consulta(consulta)
                 .build();
     
-        // Associa o laudo à consulta antes de salvar
-        consulta.setLaudo(document);
     
         // Salva ambos os objetos
         laudoRepository.save(document);
