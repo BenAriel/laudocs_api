@@ -7,16 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import br.api.laudocs.laudocs_api.api.dto.UsuarioCreateDTO;
 import br.api.laudocs.laudocs_api.api.dto.UsuarioDTO;
 import br.api.laudocs.laudocs_api.enums.Role;
 
-import java.util.Collection;
-import java.util.List;
 
 
 @Getter
@@ -25,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tb_usuarios")
-public class Usuario implements UserDetails {
+public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -58,41 +52,16 @@ public class Usuario implements UserDetails {
     }
 
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == Role.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+   public Role getRole() {
+        return role;
     }
 
-    @Override
-    public String getUsername() {
-        return nome;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public String getPassword() {
-        return senha;
-    }
+  
     
     
 }
