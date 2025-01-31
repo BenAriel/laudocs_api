@@ -30,16 +30,6 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/laudo/{documentId}").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/laudo").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/usuario/remover/{userId}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/usuario/{userId}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/usuario").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/usuario/alterar").hasRole("ADMIN")
-                        .requestMatchers("/ws/**").permitAll() // Permite acesso ao WebSocket
-                        .requestMatchers("/sse/**").permitAll() // Permite acesso ao SSE
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
@@ -50,6 +40,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://localhost:8080");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
