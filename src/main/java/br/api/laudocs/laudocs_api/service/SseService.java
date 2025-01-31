@@ -25,17 +25,18 @@ public class SseService {
 
     public void sendEvent(String eventName, Object data) {
         List<SseEmitter> deadEmitters = new ArrayList<>();
-
-        for (SseEmitter emitter : emitters) {
+    
+        // Usando iterador para evitar concorrência de modificação
+        for (SseEmitter emitter : new ArrayList<>(emitters)) {
             try {
                 emitter.send(SseEmitter.event()
-                        .name(eventName) 
-                        .data(data)); 
+                        .name(eventName)
+                        .data(data));
             } catch (IOException e) {
                 deadEmitters.add(emitter); // Adiciona emitters que falharam para remoção
             }
         }
-
+    
         // Remove emitters que falharam
         emitters.removeAll(deadEmitters);
     }
