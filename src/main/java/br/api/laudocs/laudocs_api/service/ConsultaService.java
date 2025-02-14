@@ -65,11 +65,19 @@ public class ConsultaService {
         return new ConsultaDTOresponse(consulta);
     }
 
-    public List<ConsultaDTOresponse> getAllConsultas() {
+    public List<ConsultaDTOresponse> getConsultas() {
         List<Consulta> consultas = repo.findAll();
     
         return consultas.stream()
             .filter(consulta -> consulta.getStatus().equals(Status.FILA))
+            .map(consulta -> new ConsultaDTOresponse(consulta))
+            .collect(Collectors.toList());
+    }
+
+    public List<ConsultaDTOresponse> getAllConsultas() {
+        List<Consulta> consultas = repo.findAll();
+    
+        return consultas.stream()
             .map(consulta -> new ConsultaDTOresponse(consulta))
             .collect(Collectors.toList());
     }

@@ -29,6 +29,14 @@ public class ConsultaController {
     @GetMapping
     public ResponseEntity<List<ConsultaDTOresponse>> listarConsultas() {
         ResponseEntity<List<ConsultaDTOresponse>> response =
+                new ResponseEntity<List<ConsultaDTOresponse>>(service.getConsultas(),
+                        HttpStatus.OK);
+        return response;
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ConsultaDTOresponse>> allConsultas() {
+        ResponseEntity<List<ConsultaDTOresponse>> response =
                 new ResponseEntity<List<ConsultaDTOresponse>>(service.getAllConsultas(),
                         HttpStatus.OK);
         return response;
