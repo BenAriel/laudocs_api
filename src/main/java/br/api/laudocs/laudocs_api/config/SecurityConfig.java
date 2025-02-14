@@ -30,7 +30,16 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/laudo/{documentId}").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/laudo").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/usuario/remover/{userId}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/v1/usuario/{userId}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/v1/usuario").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/usuario/alterar").hasRole("ADMIN")
+                .requestMatchers("/sse/**").permitAll()
+                .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
