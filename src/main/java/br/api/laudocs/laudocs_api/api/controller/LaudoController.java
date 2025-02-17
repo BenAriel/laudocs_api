@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import br.api.laudocs.laudocs_api.api.dto.LaudoDTOresponse;
 import br.api.laudocs.laudocs_api.api.dto.LaudoDTOrequest;
@@ -39,6 +42,7 @@ public class LaudoController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=\"" + response.getUrl() + "\"");
+        headers.setContentType(MediaType.APPLICATION_PDF);
 
         return new ResponseEntity<>(response.getContent(), headers, HttpStatus.OK);
     }
