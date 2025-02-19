@@ -13,7 +13,7 @@ public class SseService {
     private final List<SseEmitter> emitters = new ArrayList<>();
 
     public SseEmitter subscribe() {
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE); 
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitters.add(emitter);
 
         emitter.onCompletion(() -> emitters.remove(emitter));
