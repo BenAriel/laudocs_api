@@ -4,6 +4,7 @@ package br.api.laudocs.laudocs_api.api.controller;
 import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOrequest;
 import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOresponse;
 import br.api.laudocs.laudocs_api.api.dto.ConsultaDTOupdate;
+import br.api.laudocs.laudocs_api.exception.ValidationException;
 import br.api.laudocs.laudocs_api.service.ConsultaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,12 @@ public class ConsultaController {
 
     @PostMapping
     public ResponseEntity<ConsultaDTOresponse> criarConsulta(@RequestBody ConsultaDTOrequest consultaDTO) {
-        ResponseEntity<ConsultaDTOresponse> response = new ResponseEntity<ConsultaDTOresponse>(
-                service.createConsulta(consultaDTO), HttpStatus.OK);
-        return response;
+        try {
+            ConsultaDTOresponse response = service.createConsulta(consultaDTO);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (ValidationException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT); // existe consulta ativa, retorna 409
+        }
     }
 
     @GetMapping
