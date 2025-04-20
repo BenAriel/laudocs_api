@@ -28,6 +28,12 @@ public class LaudoController {
     @Autowired
     private LaudoService laudoService;
 
+
+    @GetMapping()
+    public ResponseEntity<?> listAll() {
+        return ResponseEntity.ok(laudoService.listAll());
+    }
+
     @PostMapping("/criar")
     public ResponseEntity<LaudoDTOresponse> createLaudo(@Valid @ModelAttribute LaudoDTOrequest laudoCreateDTO) throws IOException {
         LaudoDTOresponse novoLaudo = laudoService.save(laudoCreateDTO);

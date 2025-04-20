@@ -33,6 +33,13 @@ public class LaudoService {
     @Autowired
     private ConsultaRepository consultaRepository;
 
+
+
+    public List<LaudoDTOresponse> listAll() {
+        List<Laudo> documents = laudoRepository.findAll();
+        return documents.stream().map(LaudoDTOresponse::new).collect(Collectors.toList());
+    }
+
     public List<LaudoDTOresponse> list(long patientId) 
     {
         pacienteRepository.findById(patientId).orElseThrow(() -> 

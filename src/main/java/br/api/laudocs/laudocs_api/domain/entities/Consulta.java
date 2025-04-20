@@ -46,6 +46,7 @@ public class Consulta {
         this.medicoSolicitante = dto.getMedicoSolicitante();
         this.status = Status.FILA;
     }
+    
 
     public void consultaRealizada() {
         this.status = Status.FINALIZADA;

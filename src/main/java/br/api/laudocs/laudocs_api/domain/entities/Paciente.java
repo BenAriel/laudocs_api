@@ -41,6 +41,7 @@ public class Paciente {
     private int idade;
 
     @OneToMany(mappedBy = "paciente")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Laudo> laudos;
 
     public Paciente(PacienteDTO dto) {
